@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ConectaPsi</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background-color: #2f3542;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 40px;
+      text-align: center;
+    }
+    .botoes {
+      margin-top: 30px;
+    }
+    .botoes button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    select {
+      padding: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ConectaPsi</h1>
+    <p>Conectando Psicólogos e Supervisores para um futuro profissional melhor</p>
+  </header>
+  <main>
+    <h2>Bem-vindo!</h2>
+    <p>Nosso site facilita a conexão entre psicólogos e supervisores de forma simples e prática.</p>
+    
+    <div class="botoes">
+      <label for="tipoUsuario">Selecione seu perfil:</label>
+      <select id="tipoUsuario">
+        <option value="supervisor">Supervisor</option>
+        <option value="psicologo">Psicólogo</option>
+      </select><br><br>
+
+      <button onclick="irParaCadastro()">Cadastrar</button>
+      <button onclick="irParaLogin()">Entrar</button>
+    </div>
+  </main>
+
+  <script>
+    function irParaCadastro() {
+      const tipo = document.getElementById('tipoUsuario').value;
+      window.location.href = tipo === 'supervisor' ? 'dashboard-supervisor.html' : 'dashboard-psicologo.html';
+    }
+    function irParaLogin() {
+      irParaCadastro(); // mesma lógica simulada
+    }
+  </script>
+</body>
+</html>
