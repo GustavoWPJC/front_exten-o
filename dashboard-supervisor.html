@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dashboard Supervisor</title>
+
+  <link rel="stylesheet" href="css/dashboard-supervisor.css" />
+
   <link rel="stylesheet" href="css/dashboard.css">
   <!-- FullCalendar CDN -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
 
 </head>
 <body>
@@ -38,6 +42,11 @@
 </section>
 
       <section id="solicitacoes" class="secao">
+
+        <h2>Solicitações</h2>
+        <div id="listaSolicitacoes"></div>
+      </section>
+
   <div class="solicitacoes-container">
     <h2>Solicitações de Conversa</h2>
 
@@ -75,7 +84,21 @@
 
       <section id="conversas" class="secao">
         <h2>Conversas</h2>
-        <p>Suas conversas aparecerão aqui.</p>
+        <div class="chat-container">
+          <aside class="lista-contatos" id="listaContatos">
+            <!-- Lista de psicólogos com conversa -->
+          </aside>
+          <section class="chat" id="chatArea">
+            <header id="chatHeader">Selecione um contato</header>
+            <div id="chatMensagens" class="chat-mensagens">
+              <!-- Mensagens aparecerão aqui -->
+            </div>
+            <footer class="chat-input-area">
+              <input type="text" id="inputMensagem" placeholder="Digite sua mensagem..." disabled />
+              <button id="btnEnviar" disabled>Enviar</button>
+            </footer>
+          </section>
+        </div>
       </section>
 
       <section id="perfil" class="secao">
