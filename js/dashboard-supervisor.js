@@ -49,6 +49,7 @@ function gerarCalendario() {
   }
 }
 
+
 async function carregarSolicitacoes() {
   try {
     const resSolic = await fetch(`${API_BASE}/solicitacoes/supervisor/${SUPERVISOR_ID}`);
@@ -287,3 +288,4 @@ document.addEventListener("DOMContentLoaded", () => {
   gerarCalendario();
   carregarSolicitacoes();
 });
+document.addEventListener("DOMContentLoaded", gerarCalendario);

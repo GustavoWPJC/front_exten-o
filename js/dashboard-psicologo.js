@@ -79,6 +79,7 @@ function solicitar(supervisorId, nomeSupervisor) {
     .catch(() => alert("Erro ao enviar solicitação."));
 }
 
+
 function carregarSolicitacoes() {
   fetch(`https://apimensagemlogin-production.up.railway.app/solicitacoes/psicologo/${psicologoId}`)
     .then(res => res.json())
@@ -230,3 +231,86 @@ function limparChat() {
   document.getElementById("chatMensagens").innerHTML = "<p>Selecione um contato para iniciar a conversa.</p>";
   document.getElementById("chatInputArea").style.display = "none";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderizarSupervisores(supervisores);
+});
+
+
+
+
+  function enviarMensagem() {
+    const input = document.getElementById("mensagemInput");
+    const texto = input.value.trim();
+    if (texto) {
+      const div = document.createElement("div");
+      div.className = "mensagem enviada";
+      div.innerText = texto;
+      document.getElementById("mensagens").appendChild(div);
+      input.value = "";
+    }
+  }
+
+  function abrirConversa(nome) {
+    const contatos = document.querySelectorAll(".contato");
+    contatos.forEach(c => c.classList.remove("ativo"));
+    event.target.classList.add("ativo");
+
+    // Aqui você poderia carregar a conversa do contato selecionado (futuramente com banco de dados)
+    const mensagens = document.getElementById("mensagens");
+    mensagens.innerHTML = `
+      <div class="mensagem recebida">Olá, você está falando com ${nome}.</div>
+      <div class="mensagem enviada">Olá, tudo bem?</div>
+    `;
+  }
+
+
+
+
+
+
+
+
+  async function carregarPerfil() {
+    const perfilDiv = document.getElementById('perfilConteudo');
+
+    const usuarioJson = localStorage.getItem('usuarioLogado');
+    if (!usuarioJson) {
+      perfilDiv.innerHTML = "<p>Usuário não está logado.</p>";
+      return;
+    }
+
+    const usuario = JSON.parse(usuarioJson);
+    const tipo = usuario.tipoUsuario; // 'supervisor' ou 'psicologo'
+    const email = usuario.email;
+
+    try {
+      const resposta = await fetch(`https://apimensagemlogin-production.up.railway.app/usuarios/tipo/${tipo}`);
+      
+      if (!resposta.ok) {
+        throw new Error("Erro ao buscar usuários do tipo " + tipo);
+      }
+
+      const listaUsuarios = await resposta.json();
+
+      // Filtra o usuário logado pelo e-mail
+      const dadosUsuario = listaUsuarios.find(u => u.email === email);
+
+      if (!dadosUsuario) {
+        perfilDiv.innerHTML = "<p>Usuário não encontrado na base de dados.</p>";
+        return;
+      }
+
+      perfilDiv.innerHTML = `
+        <p><strong>Nome:</strong> ${dadosUsuario.nome}</p>
+        <p><strong>Email:</strong> ${dadosUsuario.email}</p>
+        <p><strong>CRP:</strong> ${dadosUsuario.crp}</p>
+        <p><strong>Tipo de usuário:</strong> ${dadosUsuario.tipoUsuario}</p>
+      `;
+    } catch (erro) {
+      console.error('Erro ao carregar perfil:', erro);
+      perfilDiv.innerHTML = "<p>Erro ao carregar as informações do perfil.</p>";
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', carregarPerfil);
