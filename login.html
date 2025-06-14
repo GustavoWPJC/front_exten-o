@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | PsiConecta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f2f6;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .form-section {
+      flex: 1;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: #ffffff;
+      max-width: 60%;
+    }
+
+    .form-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #2f3542;
+    }
+
+    .form-section input {
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .form-section button {
+      padding: 12px;
+      background-color: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .form-section p {
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+
+    .form-section a {
+      color: #1e90ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .image-section {
+      flex: 1;
+      background: url('https://via.placeholder.com/800x800?text=Consultório') no-repeat center center;
+      background-size: cover;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .image-section {
+        height: 300px;
+        order: -1;
+      }
+
+      .form-section {
+        padding: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="form-section">
+      <h2>Bem-vindo de volta</h2>
+      <form>
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Senha" required>
+        <button type="button" onclick="irParaLogin">Entrar</button>
+      </form>
+      <p>Não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
+    </div>
+    <div class="image-section"></div>
+  </div>
+
+
+   <script>
+    function irParaCadastro() {
+      const tipo = document.getElementById('tipoUsuario').value;
+      window.location.href = tipo === 'supervisor' ? 'dashboard-supervisor.html' : 'dashboard-psicologo.html';
+    }
+    function irParaLogin() {
+      irParaCadastro(); // mesma lógica simulada
+    }
+  </script>
+
+</body>
+</html>

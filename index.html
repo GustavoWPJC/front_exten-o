@@ -3,56 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <title>ConectaPsi</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    header {
-      background-color: #2f3542;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    main {
-      padding: 40px;
-      text-align: center;
-    }
-    .botoes {
-      margin-top: 30px;
-    }
-    .botoes button {
-      margin: 10px;
-      padding: 12px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    select {
-      padding: 8px;
-      font-size: 16px;
-    }
-  </style>
+  <link rel="stylesheet" href="./css/index.css">
+
 </head>
 <body>
   <header>
-    <h1>ConectaPsi</h1>
-    <p>Conectando Psicólogos e Supervisores para um futuro profissional melhor</p>
-  </header>
-  <main>
-    <h2>Bem-vindo!</h2>
-    <p>Nosso site facilita a conexão entre psicólogos e supervisores de forma simples e prática.</p>
-    
-    <div class="botoes">
-      <label for="tipoUsuario">Selecione seu perfil:</label>
-      <select id="tipoUsuario">
-        <option value="supervisor">Supervisor</option>
-        <option value="psicologo">Psicólogo</option>
-      </select><br><br>
-
-      <button onclick="irParaCadastro()">Cadastrar</button>
-      <button onclick="irParaLogin()">Entrar</button>
+      <h1>
+          <span class="psi">Psi</span><span class="conecta">Conecta</span>
+      </h1>
+    <nav>
+      <ul>
+        <li><a href="Home">Home</a></li>
+        <li><a href="Home">Quem somos</a></li>
+        <li><a href="Home">Contato</a></li>
+      </ul>
+    </nav>
+    <div class="buttons">
+         <button onclick="window.location.href='cadastro.html'" class="button-header-criar-conta">
+            Criar Conta
+         </button>
+         <button onclick="window.location.href='login.html'"  class="button-header-login">
+             Login
+         </button>
     </div>
+  </header>
+  
+
+ <main class="landing-container">
+
+    <!-- Seção inicial -->
+    <section class="intro-section">
+      <div class="intro-text">
+        <h1>
+          Bem-vindo ao <span class="psi">Psi</span><span class="conecta">Conecta</span>
+        </h1>
+        <p>
+          Conectamos psicólogos e supervisores de forma prática, ética e segura. <br>
+          Nossa plataforma foi criada para facilitar o acompanhamento profissional por meio de supervisões personalizadas e acessíveis.
+        </p>
+        <p class="call">
+          <strong>Cadastre-se como psicólogo ou supervisor e faça parte de uma rede de crescimento e aprendizado mútuo.</strong>
+        </p>
+      
+      </div>
+      <div class="intro-image">
+        <img src="./imgs/um-consultorio-medico-minimalista-com-um-espaco-de-consulta-elegante_853812-6382.avif" alt="Imagem de conexão">
+      </div>
+    </section>
+
+    <!-- Seção de funcionalidades -->
+    <section class="features-section">
+      <h2>O que você encontra aqui:</h2>
+      <div class="features">
+        <div class="feature-box">
+          <span>🧑‍⚕️</span>
+          <p>Supervisores qualificados em diversas abordagens</p>
+        </div>
+        <div class="feature-box">
+          <span>📅</span>
+          <p>Agendamento facilitado de encontros</p>
+        </div>
+        <div class="feature-box">
+          <span>💬</span>
+          <p>Chat direto entre psicólogo e supervisor</p>
+        </div>
+        <div class="feature-box">
+          <span>📈</span>
+          <p>Acompanhamento do seu desenvolvimento profissional</p>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+
+
+
+
+
+
+
+
+
+
 
   <script>
     function irParaCadastro() {

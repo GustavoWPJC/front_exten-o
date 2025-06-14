@@ -1,0 +1,182 @@
+body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background-color: #ffffff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+    }
+    main {
+      padding: 40px;
+      text-align: center;
+    }
+    .botoes {
+      margin-top: 30px;
+    }
+    .botoes button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    select {
+      padding: 8px;
+      font-size: 16px;
+    }
+    nav{
+        display: flex;
+        width: 60%;
+        justify-content: center;
+        align-items: center;
+
+    }
+    ul{
+        display: flex;
+        gap: 20px;
+        list-style: none;
+        justify-content: space-between;
+        
+    }
+    li a{
+        text-decoration: none;
+        color: #3f3f3f;
+        
+    }
+
+    li{
+        
+    }
+    .buttons{
+        height: 50px;
+        display: flex;
+        gap: 10px;
+        font-size: 2rem;
+    }
+  
+    .button-header-login{
+        background-color: #5474bb;
+        border-radius: 10px;
+        width: 120px;
+        color: #fff;
+        border: none;
+        
+    }
+    .button-header-criar-conta{
+        background-color: #ffffff;
+        border-radius: 10px;
+        width: 120px;
+        border: 1px solid rgb(44, 184, 226);
+        
+    }
+
+    
+
+
+
+
+
+
+
+    
+
+.landing-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  
+}
+
+/* Título com cores */
+.psi {
+  color: #0077cc;
+}
+.conecta {
+  color: #00aa88;
+}
+
+.intro-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  text-align: left; /* <<< Alinha tudo à esquerda */
+}
+
+.intro-text {
+  flex: 1 1 500px;
+  text-align: left; /* <<< Garante alinhamento à esquerda */
+}
+
+.intro-text h1 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+}
+
+.intro-text p {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.call {
+  margin-top: 20px;
+  font-size: 1.1rem;
+}
+
+.intro-image {
+  flex: 1 1 400px;
+  text-align: right; /* <<< Opcional: alinha imagem à direita */
+}
+
+.intro-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+
+/* Seção de funcionalidades */
+.features-section {
+  margin-top: 60px;
+  text-align: center;
+}
+
+.features-section h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.feature-box {
+  flex: 1 1 220px;
+  background: #f0f8ff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #ccc;
+  transition: transform 0.3s ease;
+}
+
+.feature-box:hover {
+  transform: translateY(-5px);
+}
+
+.feature-box span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 10px;
+}
