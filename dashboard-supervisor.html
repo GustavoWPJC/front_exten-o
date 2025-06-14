@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dashboard Supervisor</title>
-  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/dashboard-supervisor.css" />
 </head>
 <body>
   <div class="container">
@@ -26,12 +26,26 @@
 
       <section id="solicitacoes" class="secao">
         <h2>Solicitações</h2>
-        <p>Aqui aparecerão as solicitações.</p>
+        <div id="listaSolicitacoes"></div>
       </section>
 
       <section id="conversas" class="secao">
         <h2>Conversas</h2>
-        <p>Suas conversas aparecerão aqui.</p>
+        <div class="chat-container">
+          <aside class="lista-contatos" id="listaContatos">
+            <!-- Lista de psicólogos com conversa -->
+          </aside>
+          <section class="chat" id="chatArea">
+            <header id="chatHeader">Selecione um contato</header>
+            <div id="chatMensagens" class="chat-mensagens">
+              <!-- Mensagens aparecerão aqui -->
+            </div>
+            <footer class="chat-input-area">
+              <input type="text" id="inputMensagem" placeholder="Digite sua mensagem..." disabled />
+              <button id="btnEnviar" disabled>Enviar</button>
+            </footer>
+          </section>
+        </div>
       </section>
 
       <section id="perfil" class="secao">

@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dashboard Psicólogo</title>
-  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/dashboard-psicologo.css" />
 </head>
 <body>
   <div class="container">
     <aside class="sidebar">
       <h2>Psicólogo</h2>
       <ul>
-        <li onclick="mostrarSecao('procurar')">Procurar Supervisores</li>
-        <li onclick="mostrarSecao('solicitacoes')">Solicitações</li>
-        <li onclick="mostrarSecao('conversas')">Conversas</li>
-        <li onclick="mostrarSecao('perfil')">Perfil</li>
+        <li onclick="mostrarSecao('procurar')" id="menu-procurar" class="ativo">Procurar Supervisores</li>
+        <li onclick="mostrarSecao('solicitacoes')" id="menu-solicitacoes">Solicitações</li>
+        <li onclick="mostrarSecao('conversas')" id="menu-conversas">Conversas</li>
+        <li onclick="mostrarSecao('perfil')" id="menu-perfil">Perfil</li>
         <li><a href="index.html">Sair</a></li>
       </ul>
     </aside>
@@ -21,18 +21,35 @@
     <main class="conteudo">
       <section id="procurar" class="secao ativa">
         <h2>Procurar Supervisores</h2>
-        <input type="text" id="filtroSupervisor" placeholder="Buscar por nome ou área..." oninput="filtrarSupervisores()">
+        <input
+          type="text"
+          id="filtroSupervisor"
+          placeholder="Buscar por nome ou área..."
+          oninput="filtrarSupervisores()"
+        />
         <div id="listaSupervisores" class="cards"></div>
       </section>
 
       <section id="solicitacoes" class="secao">
         <h2>Solicitações</h2>
-        <p>Aqui aparecerão as suas solicitações.</p>
+        <div id="listaSolicitacoes"></div>
       </section>
 
       <section id="conversas" class="secao">
         <h2>Conversas</h2>
-        <p>Suas conversas aparecerão aqui.</p>
+        <div class="chat-container">
+          <aside class="lista-contatos" id="listaContatos"></aside>
+          <section class="chat" id="chatArea">
+            <div class="chat-header" id="chatHeader">
+              <span>Selecione uma conversa</span>
+            </div>
+            <div class="chat-mensagens" id="chatMensagens"></div>
+            <div class="chat-input" id="chatInputArea" style="display:none;">
+              <input type="text" id="inputMensagem" placeholder="Digite sua mensagem..." />
+              <button onclick="enviarMensagem()">Enviar</button>
+            </div>
+          </section>
+        </div>
       </section>
 
       <section id="perfil" class="secao">
