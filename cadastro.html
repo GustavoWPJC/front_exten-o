@@ -5,89 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cadastro | PsiConecta</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
+      background-image: url('./imgs/um-consultorio-medico-minimalista-com-um-espaco-de-consulta-elegante_853812-6382.avif');
+      background-size: cover;
+      background-position: center;
+      position: relative;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f1f2f6;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
-    .auth-container {
-      background: white;
-      color: #2f3542;
-      max-width: 400px;
-      padding: 30px;
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.2);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .form-container {
+      position: relative;
+      z-index: 1;
+      background-color: rgba(250, 250, 250, 0.973);
+      padding: 50px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height:70vh;
     }
 
-    .auth-container h2 {
+    .form-container h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #2f3542;
       text-align: center;
-      margin-bottom: 20px;
     }
 
-    .auth-container input,
-    .auth-container select {
+    .form-container input,
+    .form-container select {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #ddd;
       border-radius: 6px;
+      font-size: 16px;
     }
 
-    .auth-container button {
+    .form-container button {
       width: 100%;
-      background: #1e90ff;
+      padding: 14px;
+      background-color: #1e90ff;
       color: white;
       border: none;
-      padding: 10px 18px;
       border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
+    }
+
+    .form-container p {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .form-container a {
+      color: #1e90ff;
+      text-decoration: none;
       font-weight: bold;
     }
 
-    .auth-container p {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .auth-container a {
-      color: #1e90ff;
-      text-decoration: none;
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 30px;
+        height: auto;
+        margin-top: 50px;
+        margin-bottom: 50px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="auth-container">
+  <div class="form-container">
     <h2>Criar Conta</h2>
-    <form>
-      <input type="text" placeholder="Nome completo" required />
-      <input type="email" placeholder="Email" required />
-      <input type="password" placeholder="Senha" required />
-
-      <label for="tipoUsuario">Sou:</label>
-      <select id="tipoUsuario">
-        <option value="psicologo">Psicólogo</option>
-        <option value="supervisor">Supervisor</option>
-      </select>
-
-      <button  type="button" onclick="irParaCadastro()" >Cadastrar</button>
-    </form>
+   
+<form id="cadastroForm">
+  <input type="text" id="nome" placeholder="Nome completo" required />
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="text" id="crp" placeholder="Crp" required />
+  <input type="password" id="senha" placeholder="Senha" required />
+  <label for="tipoUsuario">Sou:</label>
+  <select id="tipoUsuario">
+    <option value="psicologo">Psicólogo</option>
+    <option value="supervisor">Supervisor</option>
+  </select>
+  <button type="submit">Cadastrar</button>
+</form>
     <p>Já tem conta? <a href="login.html">Login</a></p>
   </div>
-<script src="/js/dashboard-psicologo.js"></script>
-<script src="/js/dashboard-supervisor.js"></script>
- <script>
-    function irParaCadastro() {
-      const tipo = document.getElementById('tipoUsuario').value;
-      window.location.href = tipo === 'supervisor' ? 'dashboard-supervisor.html' : 'dashboard-psicologo.html';
+
+
+<script>
+  const form = document.getElementById('cadastroForm');
+
+form.addEventListener('submit', async function(event) {
+  event.preventDefault(); // evita recarregar a página
+
+  const nome = document.getElementById('nome').value;
+  const email = document.getElementById('email').value;
+  const crp = document.getElementById('crp').value;
+  const senha = document.getElementById('senha').value;
+  const tipoUsuario = document.getElementById('tipoUsuario').value;
+
+  if (!nome || !email || !crp || !senha) {
+    alert('Por favor, preencha todos os campos.');
+    return;
+  }
+
+  const dados = { nome, email, senha, crp, tipoUsuario };
+
+  try {
+    const resposta = await fetch('https://apimensagemlogin-production.up.railway.app/usuarios', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    });
+
+    if (resposta.ok) {
+      alert('Cadastro realizado com sucesso!');
+      // Redireciona para o login, após cadastro
+      window.location.href = 'login.html';
+    } else {
+      const erro = await resposta.json();
+      alert('Erro no cadastro: ' + (erro.message || 'Verifique os dados.'));
     }
-    function irParaLogin() {
-      irParaCadastro(); // mesma lógica simulada
-    }
-  </script>
+  } catch (e) {
+    console.error('Erro na comunicação:', e);
+    alert('Erro ao comunicar com o servidor.');
+  }
+});
+
+</script>
+
+
+
 </body>
 </html>
