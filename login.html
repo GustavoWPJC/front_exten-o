@@ -1,120 +1,143 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login | PsiConecta</title>
   <style>
+    /* estilos iguais aos que você já tinha, mantidos */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
-    body, html {
-      height: 100%;
+    body {
+      background-image: url('./imgs/um-consultorio-medico-minimalista-com-um-espaco-de-consulta-elegante_853812-6382.avif');
+      background-size: cover;
+      background-position: center;
+      position: relative;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f1f2f6;
-    }
-
-    .container {
-      display: flex;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-
-    .form-section {
-      flex: 1;
-      padding: 60px;
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.2);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .form-container {
+      position: relative;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 50px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
       justify-content: center;
-      background-color: #ffffff;
-      max-width: 60%;
+      height: 70vh;
     }
-
-    .form-section h2 {
+    .form-container h2 {
       font-size: 2rem;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       color: #2f3542;
+      text-align: center;
     }
-
-    .form-section input {
-      padding: 12px;
+    .form-container input {
+      width: 100%;
+      padding: 14px;
       margin-bottom: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      width: 100%;
+      font-size: 16px;
     }
-
-    .form-section button {
-      padding: 12px;
+    .form-container button {
+      width: 100%;
+      padding: 14px;
       background-color: #1e90ff;
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 1rem;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
     }
-
-    .form-section p {
+    .form-container p {
       margin-top: 20px;
+      text-align: center;
       font-size: 0.95rem;
     }
-
-    .form-section a {
+    .form-container a {
       color: #1e90ff;
       text-decoration: none;
       font-weight: bold;
     }
-
-    .image-section {
-      flex: 1;
-      background: url('https://via.placeholder.com/800x800?text=Consultório') no-repeat center center;
-      background-size: cover;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .image-section {
-        height: 300px;
-        order: -1;
-      }
-
-      .form-section {
-        padding: 30px;
-      }
-    }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <div class="form-section">
-      <h2>Bem-vindo de volta</h2>
-      <form>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Senha" required>
-        <button type="button" onclick="irParaLogin">Entrar</button>
-      </form>
-      <p>Não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
-    </div>
-    <div class="image-section"></div>
+  <div class="form-container">
+    <h2>Bem-vindo de volta</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="senha" placeholder="Senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <p>Não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
   </div>
 
+ <script>
+  document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Impede o recarregamento da página
 
-   <script>
-    function irParaCadastro() {
-      const tipo = document.getElementById('tipoUsuario').value;
-      window.location.href = tipo === 'supervisor' ? 'dashboard-supervisor.html' : 'dashboard-psicologo.html';
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    try {
+      const response = await fetch("https://apimensagemlogin-production.up.railway.app/usuarios/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, senha })
+      });
+
+      console.log("Status da resposta:", response.status);
+
+      if (!response.ok) {
+        const erro = await response.text();
+        throw new Error("Erro ao fazer login: " + erro);
+      }
+
+      const data = await response.json();
+      console.log("Login realizado com sucesso:", data);
+
+      // Salva os dados no localStorage
+      localStorage.setItem("usuarioLogado", JSON.stringify(data));
+
+      // Redireciona conforme o tipo de usuário
+      if (data.tipoUsuario === "supervisor") {
+        window.location.href = "dashboard-supervisor.html";
+      } else {
+        window.location.href = "dashboard-psicologo.html";
+      }
+
+    } catch (error) {
+      console.error("Erro no login:", error);
+      alert("Erro ao fazer login:\n" + error.message);
     }
-    function irParaLogin() {
-      irParaCadastro(); // mesma lógica simulada
-    }
-  </script>
+  });
+</script>
 
 </body>
 </html>
