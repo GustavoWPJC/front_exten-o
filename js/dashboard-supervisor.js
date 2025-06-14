@@ -1,11 +1,21 @@
-const SUPERVISOR_ID = 3; // Ajuste para supervisor logado
+const API_BASE = "https://apimensagemlogin-production.up.railway.app";
+const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+if (!usuarioLogado || usuarioLogado.tipoUsuario !== "supervisor") {
+  alert("Acesso não autorizado. Faça login como supervisor.");
+  window.location.href = "login.html";
+}
+
+const SUPERVISOR_ID = usuarioLogado.id;
+
 let psicologos = [];
 let solicitacoes = [];
 let conversas = [];
-let conversaAtualId = null;
+let conversaAtualId = null; // psicologoId da conversa aberta
 
 function mostrarSecao(id) {
-  document.querySelectorAll(".secao").forEach(secao => secao.classList.remove("ativa"));
+  const secoes = document.querySelectorAll(".secao");
+  secoes.forEach(secao => secao.classList.remove("ativa"));
   document.getElementById(id).classList.add("ativa");
 
   if (id === "solicitacoes") {
@@ -15,7 +25,7 @@ function mostrarSecao(id) {
   }
 }
 
-async function gerarCalendario() {
+function gerarCalendario() {
   const calendario = document.getElementById("calendario");
   calendario.innerHTML = "";
   const hoje = new Date();
@@ -26,7 +36,8 @@ async function gerarCalendario() {
 
   const diasAgendados = [3, 10, 15, 22];
   for (let i = 0; i < primeiroDiaSemana; i++) {
-    calendario.appendChild(document.createElement("div"));
+    const vazio = document.createElement("div");
+    calendario.appendChild(vazio);
   }
 
   for (let dia = 1; dia <= diasDoMes; dia++) {
@@ -40,13 +51,17 @@ async function gerarCalendario() {
 
 async function carregarSolicitacoes() {
   try {
-    const resSolic = await fetch(`https://apimensagemlogin-production.up.railway.app/solicitacoes/supervisor/${SUPERVISOR_ID}`);
+    const resSolic = await fetch(`${API_BASE}/solicitacoes/supervisor/${SUPERVISOR_ID}`);
     solicitacoes = await resSolic.json();
 
-    const resPsicos = await fetch(`https://apimensagemlogin-production.up.railway.app/usuarios/tipo/psicologo`);
+    // Depois que solicitacoes carregarem, carrega psicólogos
+    const resPsicos = await fetch(`${API_BASE}/usuarios/tipo/psicologo`);
     psicologos = await resPsicos.json();
 
     renderizarSolicitacoes();
+
+    // Após carregar solicitações, atualiza conversas
+    await carregarConversas();
   } catch (erro) {
     console.error("Erro ao carregar solicitações:", erro);
     document.getElementById("listaSolicitacoes").innerText = "Erro ao carregar solicitações.";
@@ -86,47 +101,41 @@ function renderizarSolicitacoes() {
 
 async function responder(id, acao) {
   try {
-    await fetch(`https://apimensagemlogin-production.up.railway.app/solicitacoes/${id}/${acao}`, { method: "POST" });
-    await carregarSolicitacoes();
-  } catch {
+    await fetch(`${API_BASE}/solicitacoes/${id}/${acao}`, {
+      method: "POST"
+    });
+    carregarSolicitacoes();
+  } catch (erro) {
     alert("Erro ao responder solicitação.");
   }
 }
 
-// Carrega conversas reais do backend
+// --- Chat ---
+
 async function carregarConversas() {
-  if (psicologos.length === 0) {
-    // Carrega psicólogos se não tiver
-    const resPsicos = await fetch(`https://apimensagemlogin-production.up.railway.app/usuarios/tipo/psicologo`);
-    psicologos = await resPsicos.json();
-  }
-
-  // Filtra psicólogos com solicitações ACEITAS para montar conversas
-  const aceitas = solicitacoes.filter(s => s.status === "ACEITA");
-
-  conversas = [];
-  for (const s of aceitas) {
-    const mensagens = await fetchMensagensEntre(SUPERVISOR_ID, s.psicologoId);
-    conversas.push({ psicologoId: s.psicologoId, mensagens });
-  }
-
-  renderListaContatos();
-
-  if (conversas.length > 0) {
-    selecionarConversa(conversas[0].psicologoId);
-  } else {
-    limparChat();
-  }
-}
-
-async function fetchMensagensEntre(usuario1Id, usuario2Id) {
   try {
-    const res = await fetch(`https://apimensagemlogin-production.up.railway.app/mensagens/${usuario1Id}/${usuario2Id}`);
-    if (!res.ok) throw new Error("Erro ao buscar mensagens");
-    return await res.json();
-  } catch (err) {
-    console.error(err);
-    return [];
+    // Filtra solicitações aceitas
+    const aceitas = solicitacoes.filter(s => s.status === "ACEITA");
+
+    // Para cada psicólogo com solicitação aceita, busca mensagens
+    conversas = await Promise.all(
+      aceitas.map(async (s) => {
+        const psicologoId = s.psicologoId;
+        const resMsgs = await fetch(`${API_BASE}/mensagens/${SUPERVISOR_ID}/${psicologoId}`);
+        const mensagens = await resMsgs.json();
+        return { psicologoId, mensagens };
+      })
+    );
+
+    renderListaContatos();
+
+    if (conversas.length > 0) {
+      selecionarConversa(conversas[0].psicologoId);
+    } else {
+      limparChat();
+    }
+  } catch (erro) {
+    console.error("Erro ao carregar conversas:", erro);
   }
 }
 
@@ -164,72 +173,115 @@ function selecionarConversa(psicologoId) {
   const conversa = conversas.find(c => c.psicologoId === psicologoId);
   chatMensagens.innerHTML = "";
 
-  if (!conversa) {
+  if (!conversa || conversa.mensagens.length === 0) {
     chatMensagens.innerHTML = "<p>Nenhuma conversa iniciada.</p>";
-    inputMensagem.disabled = true;
-    btnEnviar.disabled = true;
-    return;
-  }
+  } else {
+    conversa.mensagens.forEach(msg => {
+      const div = document.createElement("div");
+      if (msg.remetenteId === SUPERVISOR_ID) {
+        div.className = "msg supervisor";
+      } else {
+        div.className = "msg psicologo";
+      }
 
-  conversa.mensagens.forEach(msg => {
-    const div = document.createElement("div");
-    div.className = "msg " + (msg.remetenteId === SUPERVISOR_ID ? "supervisor" : "psicologo");
-    div.textContent = msg.conteudo;
-    chatMensagens.appendChild(div);
-  });
+      // Conteúdo da mensagem
+      const texto = document.createElement("span");
+      texto.textContent = msg.conteudo;
+      div.appendChild(texto);
+
+      // Data da mensagem formatada
+      const dataSpan = document.createElement("span");
+      dataSpan.className = "data-msg";
+      // Usar o campo correto da data da mensagem (adeque ao seu backend)
+      const data = new Date(msg.dataEnvio || msg.data || msg.createdAt || Date.now());
+      dataSpan.textContent = data.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      div.appendChild(dataSpan);
+
+      chatMensagens.appendChild(div);
+    });
+  }
 
   inputMensagem.disabled = false;
   btnEnviar.disabled = false;
   inputMensagem.value = "";
   inputMensagem.focus();
+
+  // Scroll para o final do chat
   chatMensagens.scrollTop = chatMensagens.scrollHeight;
 }
-
-document.getElementById("btnEnviar")?.addEventListener("click", enviarMensagem);
-document.getElementById("inputMensagem")?.addEventListener("keypress", e => {
-  if (e.key === "Enter") enviarMensagem();
-});
 
 async function enviarMensagem() {
   const inputMensagem = document.getElementById("inputMensagem");
   const texto = inputMensagem.value.trim();
   if (!texto || conversaAtualId === null) return;
 
-  const novaMsg = {
+  const novaMensagem = {
     remetenteId: SUPERVISOR_ID,
     destinatarioId: conversaAtualId,
     conteudo: texto,
-    dataEnvio: new Date().toISOString()
+    lida: false
   };
 
   try {
-    // Envia para o backend
-    const res = await fetch(`https://apimensagemlogin-production.up.railway.app/mensagens`, {
+    const res = await fetch(`${API_BASE}/mensagens`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(novaMsg)
+      body: JSON.stringify(novaMensagem),
     });
+
     if (!res.ok) throw new Error("Falha ao enviar mensagem");
 
-    // Atualiza localmente as mensagens
-    const conversa = conversas.find(c => c.psicologoId === conversaAtualId);
-    conversa.mensagens.push(novaMsg);
+    const msgEnviada = await res.json();
 
-    // Atualiza UI
+    // Atualiza a conversa localmente
+    const conversa = conversas.find(c => c.psicologoId === conversaAtualId);
+    if (conversa) {
+      conversa.mensagens.push(msgEnviada);
+    }
+
     selecionarConversa(conversaAtualId);
-  } catch (err) {
+    inputMensagem.value = "";
+    inputMensagem.focus();
+  } catch (error) {
     alert("Erro ao enviar mensagem.");
-    console.error(err);
+    console.error(error);
   }
+}
+
+function iniciarConversa(psicologoId) {
+  let conversa = conversas.find(c => c.psicologoId === psicologoId);
+  if (!conversa) {
+    conversa = { psicologoId, mensagens: [] };
+    conversas.push(conversa);
+  }
+
+  mostrarSecao("conversas");
+  selecionarConversa(psicologoId);
 }
 
 function limparChat() {
   conversaAtualId = null;
-  document.getElementById("chatHeader").textContent = "Selecione um contato";
-  document.getElementById("chatMensagens").innerHTML = "";
-  document.getElementById("inputMensagem").disabled = true;
-  document.getElementById("btnEnviar").disabled = true;
+  const chatHeader = document.getElementById("chatHeader");
+  const chatMensagens = document.getElementById("chatMensagens");
+  const inputMensagem = document.getElementById("inputMensagem");
+  const btnEnviar = document.getElementById("btnEnviar");
+
+  chatHeader.textContent = "Selecione um contato";
+  chatMensagens.innerHTML = "";
+  inputMensagem.disabled = true;
+  btnEnviar.disabled = true;
 }
+
+document.getElementById("btnEnviar")?.addEventListener("click", enviarMensagem);
+document.getElementById("inputMensagem")?.addEventListener("keypress", e => {
+  if (e.key === "Enter") enviarMensagem();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   gerarCalendario();

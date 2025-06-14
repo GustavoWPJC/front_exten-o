@@ -6,6 +6,8 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   background: #f9f9f9;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .container {
@@ -18,6 +20,8 @@ body {
   background: #2c3e50;
   color: white;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar h2 {
@@ -30,18 +34,24 @@ body {
 .sidebar ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+  flex-grow: 1;
 }
 
-.sidebar ul li, .sidebar ul li a {
+.sidebar ul li,
+.sidebar ul li a {
   cursor: pointer;
   padding: 10px 8px;
   display: block;
   color: white;
   text-decoration: none;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-.sidebar ul li:hover, .sidebar ul li a:hover {
+.sidebar ul li:hover,
+.sidebar ul li a:hover,
+.sidebar ul li.ativo {
   background-color: #34495e;
 }
 
@@ -50,14 +60,18 @@ body {
   padding: 20px;
   background: white;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .secao {
   display: none;
+  flex-grow: 1;
 }
 
 .secao.ativa {
   display: block;
+  height: 100%;
 }
 
 /* Calendário */
@@ -73,6 +87,8 @@ body {
   text-align: center;
   border-radius: 4px;
   user-select: none;
+  font-weight: 500;
+  cursor: default;
 }
 
 .dia.agendado {
@@ -88,26 +104,31 @@ body {
   padding: 12px;
   margin-bottom: 10px;
   box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .card button {
-  margin-right: 8px;
+  margin-left: 8px;
   padding: 6px 12px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .card button:hover {
   opacity: 0.9;
 }
 
-.card button:nth-child(1) {
+.card button.aceitar {
   background-color: #27ae60;
   color: white;
 }
 
-.card button:nth-child(2) {
+.card button.rejeitar {
   background-color: #c0392b;
   color: white;
 }
@@ -119,6 +140,8 @@ body {
   border: 1px solid #ccc;
   border-radius: 6px;
   overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .lista-contatos {
@@ -132,6 +155,7 @@ body {
   padding: 12px;
   cursor: pointer;
   border-bottom: 1px solid #ccc;
+  transition: background-color 0.3s ease;
 }
 
 .contato:hover {
@@ -156,6 +180,7 @@ body {
   color: white;
   padding: 15px 20px;
   font-weight: bold;
+  user-select: none;
 }
 
 .chat-mensagens {
@@ -163,18 +188,26 @@ body {
   padding: 20px;
   overflow-y: auto;
   background: #ecf0f1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
+/* Mensagens */
 .msg {
   max-width: 70%;
   padding: 10px 14px;
-  margin-bottom: 12px;
+  margin-bottom: 2px;
   border-radius: 18px;
   word-wrap: break-word;
   font-size: 14px;
   line-height: 1.3;
+  position: relative;
+  display: inline-block;
+  white-space: pre-wrap;
 }
 
+/* Mensagem do supervisor (direita) */
 .msg.supervisor {
   background-color: #2980b9;
   color: white;
@@ -182,6 +215,7 @@ body {
   border-bottom-right-radius: 0;
 }
 
+/* Mensagem do psicólogo (esquerda) */
 .msg.psicologo {
   background-color: #bdc3c7;
   color: #2c3e50;
@@ -189,21 +223,44 @@ body {
   border-bottom-left-radius: 0;
 }
 
+/* Data da mensagem (abaixo da mensagem) */
+.msg-data {
+  font-size: 11px;
+  color: #555;
+  margin-top: 2px;
+  margin-left: 10px;
+  margin-right: 10px;
+  user-select: none;
+  font-style: italic;
+  max-width: 70%;
+}
+
+.msg.supervisor + .msg-data {
+  margin-left: auto;
+}
+
+.msg.psicologo + .msg-data {
+  margin-right: auto;
+}
+
+/* Área de input da mensagem */
 .chat-input-area {
-  padding: 10px;
+  padding: 10px 20px;
   border-top: 1px solid #ccc;
   display: flex;
   gap: 8px;
   background: white;
+  align-items: center;
 }
 
 #inputMensagem {
   flex: 1;
-  padding: 10px;
+  padding: 10px 14px;
   font-size: 1rem;
   border-radius: 20px;
   border: 1px solid #ccc;
   outline: none;
+  transition: background-color 0.3s ease;
 }
 
 #inputMensagem:disabled {
@@ -218,6 +275,7 @@ body {
   border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 #btnEnviar:disabled {

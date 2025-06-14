@@ -1,8 +1,20 @@
-const psicologoId = 1;
+const psicologoLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+const psicologoId = psicologoLogado?.id || 1;
+
 let supervisores = [];
 let solicitacoes = [];
 let conversas = {};
 let contatoAtivo = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+  buscarSupervisores();
+  carregarSolicitacoes();
+
+  document.getElementById("btnEnviar").addEventListener("click", enviarMensagem);
+  document.getElementById("inputMensagem").addEventListener("keypress", e => {
+    if (e.key === "Enter") enviarMensagem();
+  });
+});
 
 function mostrarSecao(id) {
   document.querySelectorAll('.secao').forEach(secao => secao.classList.remove('ativa'));
@@ -68,72 +80,61 @@ function solicitar(supervisorId, nomeSupervisor) {
 }
 
 function carregarSolicitacoes() {
-  const container = document.getElementById("listaSolicitacoes");
-  container.innerHTML = "<p>Carregando solicitações...</p>";
-
   fetch(`https://apimensagemlogin-production.up.railway.app/solicitacoes/psicologo/${psicologoId}`)
     .then(res => res.json())
     .then(data => {
       solicitacoes = data;
-      renderizarSolicitacoes(solicitacoes);
+      renderizarSolicitacoes();
       renderizarListaContatos();
 
-      // Recuperar contato ativo salvo no localStorage
-      const salvo = localStorage.getItem('contatoAtivo');
+      const salvo = localStorage.getItem("contatoAtivo");
       if (salvo) {
-        const idSalvo = parseInt(salvo, 10);
-        const supervisor = supervisores.find(s => s.id === idSalvo);
+        const supervisorId = parseInt(salvo);
+        const supervisor = supervisores.find(s => s.id === supervisorId);
         if (supervisor) {
-          abrirConversa(idSalvo, supervisor.nome);
-          return;
+          abrirConversa(supervisorId, supervisor.nome);
         }
-      }
-
-      // Se não tiver contato ativo salvo, abre a primeira conversa aceita
-      const primeiraAceita = solicitacoes.find(s => s.status === "ACEITA");
-      if (primeiraAceita) {
-        const sup = supervisores.find(s => s.id === primeiraAceita.supervisorId);
-        abrirConversa(primeiraAceita.supervisorId, sup ? sup.nome : `Supervisor #${primeiraAceita.supervisorId}`);
       } else {
-        // Nenhuma conversa aceita
-        contatoAtivo = null;
-        document.getElementById("chatHeader").textContent = "";
-        document.getElementById("chatInputArea").style.display = "none";
-        document.getElementById("chatMensagens").innerHTML = "<p>Selecione uma solicitação aceita para conversar.</p>";
+        const aceita = solicitacoes.find(s => s.status === "ACEITA");
+        if (aceita) {
+          const supervisor = supervisores.find(s => s.id === aceita.supervisorId);
+          abrirConversa(aceita.supervisorId, supervisor?.nome || `Supervisor #${aceita.supervisorId}`);
+        } else {
+          limparChat();
+        }
       }
     })
     .catch(() => {
-      container.innerHTML = "<p>Erro ao carregar solicitações.</p>";
+      document.getElementById("listaSolicitacoes").innerHTML = "<p>Erro ao carregar solicitações.</p>";
     });
 }
 
-function renderizarSolicitacoes(lista) {
+function renderizarSolicitacoes() {
   const container = document.getElementById("listaSolicitacoes");
   container.innerHTML = "";
 
-  if (lista.length === 0) {
+  if (solicitacoes.length === 0) {
     container.innerHTML = "<p>Nenhuma solicitação encontrada.</p>";
     return;
   }
 
-  lista.forEach(s => {
+  solicitacoes.forEach(s => {
     const supervisor = supervisores.find(sup => sup.id === s.supervisorId);
-    const nomeSupervisor = supervisor ? supervisor.nome : `Supervisor #${s.supervisorId}`;
-
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <h3>${nomeSupervisor}</h3>
-      <p><strong>Status:</strong> ${s.status}</p>
-      ${s.status === "ACEITA" ? `<button onclick="iniciarConversa(${s.supervisorId}, '${nomeSupervisor}')">Iniciar Conversa</button>` : ""}
+    const nome = supervisor ? supervisor.nome : `Supervisor #${s.supervisorId}`;
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${nome}</h3>
+      <p>Status: ${s.status}</p>
+      ${s.status === "ACEITA" ? `<button onclick="iniciarConversa(${s.supervisorId}, '${nome}')">Iniciar Conversa</button>` : ""}
     `;
-    container.appendChild(card);
+    container.appendChild(div);
   });
 }
 
 function iniciarConversa(supervisorId, nomeSupervisor) {
   contatoAtivo = supervisorId;
-  mostrarSecao('conversas');
+  mostrarSecao("conversas");
   renderizarListaContatos();
   abrirConversa(supervisorId, nomeSupervisor);
 }
@@ -142,31 +143,26 @@ function renderizarListaContatos() {
   const listaContatos = document.getElementById("listaContatos");
   listaContatos.innerHTML = "";
 
-  const contatosAtivos = solicitacoes
+  const contatos = solicitacoes
     .filter(s => s.status === "ACEITA")
     .map(s => {
-      const sup = supervisores.find(sup => sup.id === s.supervisorId);
-      return { id: s.supervisorId, nome: sup ? sup.nome : `Supervisor #${s.supervisorId}` };
+      const sup = supervisores.find(p => p.id === s.supervisorId);
+      return { id: s.supervisorId, nome: sup?.nome || `Supervisor #${s.supervisorId}` };
     });
 
-  contatosAtivos.forEach(contato => {
+  contatos.forEach(contato => {
     const div = document.createElement("div");
-    div.textContent = contato.nome;
     div.className = "contato";
+    div.textContent = contato.nome;
     div.onclick = () => abrirConversa(contato.id, contato.nome);
     if (contato.id === contatoAtivo) div.classList.add("selecionado");
     listaContatos.appendChild(div);
   });
-
-  // Se não houver contato ativo, abrir o primeiro da lista
-  if (contatoAtivo === null && contatosAtivos.length > 0) {
-    abrirConversa(contatosAtivos[0].id, contatosAtivos[0].nome);
-  }
 }
 
 function abrirConversa(supervisorId, nomeSupervisor) {
   contatoAtivo = supervisorId;
-  localStorage.setItem('contatoAtivo', supervisorId);
+  localStorage.setItem("contatoAtivo", supervisorId);
 
   document.getElementById("chatHeader").textContent = `Conversa com ${nomeSupervisor}`;
   document.getElementById("chatInputArea").style.display = "flex";
@@ -181,25 +177,19 @@ function abrirConversa(supervisorId, nomeSupervisor) {
       conversas[supervisorId] = [];
       renderizarMensagens(supervisorId);
     });
-
-  // Marcar contato ativo na lista
-  Array.from(document.getElementById("listaContatos").children).forEach(div => {
-    div.classList.toggle("selecionado", div.textContent === nomeSupervisor);
-  });
 }
 
 function renderizarMensagens(supervisorId) {
   const chatMensagens = document.getElementById("chatMensagens");
   chatMensagens.innerHTML = "";
 
-  const msgs = conversas[supervisorId] || [];
-
-  msgs.forEach(m => {
+  const mensagens = conversas[supervisorId] || [];
+  mensagens.forEach(msg => {
     const div = document.createElement("div");
-    div.className = "mensagem " + (m.remetenteId === psicologoId ? "remetente" : "destinatario");
+    div.className = "mensagem " + (msg.remetenteId === psicologoId ? "remetente" : "destinatario");
     div.innerHTML = `
-      <p>${m.conteudo}</p>
-      <small>${new Date(m.dataEnvio).toLocaleString()}</small>
+      <p>${msg.conteudo}</p>
+      <small>${new Date(msg.dataEnvio).toLocaleString()}</small>
     `;
     chatMensagens.appendChild(div);
   });
@@ -223,10 +213,7 @@ function enviarMensagem() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(novaMensagem)
   })
-    .then(res => {
-      if (!res.ok) throw new Error();
-      return res.json();
-    })
+    .then(res => res.json())
     .then(mensagemSalva => {
       conversas[contatoAtivo] = conversas[contatoAtivo] || [];
       conversas[contatoAtivo].push(mensagemSalva);
@@ -236,8 +223,10 @@ function enviarMensagem() {
     .catch(() => alert("Erro ao enviar mensagem."));
 }
 
-// Inicializa o app
-document.addEventListener("DOMContentLoaded", () => {
-  buscarSupervisores();
-  carregarSolicitacoes();
-});
+function limparChat() {
+  contatoAtivo = null;
+  localStorage.removeItem("contatoAtivo");
+  document.getElementById("chatHeader").textContent = "";
+  document.getElementById("chatMensagens").innerHTML = "<p>Selecione um contato para iniciar a conversa.</p>";
+  document.getElementById("chatInputArea").style.display = "none";
+}
