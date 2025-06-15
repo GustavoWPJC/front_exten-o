@@ -268,3 +268,29 @@ async function carregarPerfil() {
     perfilDiv.innerHTML = "<p>Erro ao carregar as informações do perfil.</p>";
   }
 }
+
+// Atualiza as mensagens da conversa ativa a cada 1 segundo (ou ajuste para 3000 para 3 segundos)
+setInterval(() => {
+  if (document.getElementById("conversas").classList.contains("ativa") && contatoAtivo !== null) {
+    atualizarMensagens(contatoAtivo);
+  }
+}, 1000); // 1 segundo
+
+// Função que busca as mensagens do contato ativo e atualiza na tela
+async function atualizarMensagens(supervisorId) {
+  try {
+    const res = await fetch(`https://apimensagemlogin-production.up.railway.app/mensagens/${psicologoId}/${supervisorId}`);
+    if (!res.ok) throw new Error("Erro ao buscar mensagens");
+    const mensagens = await res.json();
+
+    // Atualiza o cache local das mensagens
+    conversas[supervisorId] = mensagens;
+
+    // Atualiza a interface somente se for a conversa ativa
+    if (supervisorId === contatoAtivo) {
+      renderizarMensagens(supervisorId);
+    }
+  } catch (erro) {
+    console.error("Erro ao atualizar mensagens:", erro);
+  }
+}

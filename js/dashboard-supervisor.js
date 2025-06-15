@@ -210,7 +210,6 @@ function selecionarConversa(psicologoId) {
 
   inputMensagem.disabled = false;
   btnEnviar.disabled = false;
-  inputMensagem.value = "";
   inputMensagem.focus();
 
   // Scroll para o final do chat
@@ -289,3 +288,33 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarSolicitacoes();
 });
 document.addEventListener("DOMContentLoaded", gerarCalendario);
+
+setInterval(() => {
+  if (document.getElementById("conversas").classList.contains("ativa") && conversaAtualId !== null) {
+    // Atualiza a conversa atual sem recarregar toda a lista
+    atualizarMensagens(conversaAtualId);
+  }
+}, 5000); // a cada 5 segundos
+
+async function atualizarMensagens(supervisorId) {
+  try {
+    const res = await fetch(`${API_BASE}/mensagens/${SUPERVISOR_ID}/${supervisorId}`);
+    if (!res.ok) throw new Error("Erro ao buscar mensagens");
+    const mensagens = await res.json();
+
+    // Aqui depende do formato da variável `conversas`
+    // Se for array:
+    const conversa = conversas.find(c => c.psicologoId === supervisorId);
+    if (conversa) {
+      conversa.mensagens = mensagens;
+      if (supervisorId === conversaAtualId) {
+        selecionarConversa(supervisorId);
+      }
+    } else {
+      // Se não encontrou a conversa, pode adicionar ela:
+      conversas.push({ psicologoId: supervisorId, mensagens });
+    }
+  } catch (erro) {
+    console.error("Erro ao atualizar mensagens:", erro);
+  }
+}
