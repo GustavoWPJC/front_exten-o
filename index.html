@@ -2,99 +2,125 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>ConectaPsi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaPsi - Conectando Psicólogos e Supervisores</title>
   <link rel="stylesheet" href="./css/index.css">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-      <h1>
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <h1>
           <span class="psi">Psi</span><span class="conecta">Conecta</span>
-      </h1>
-    <nav>
-      <ul>
-        <li><a href="Home">Home</a></li>
-        <li><a href="Home">Quem somos</a></li>
-        <li><a href="Home">Contato</a></li>
-      </ul>
-    </nav>
-    <div class="buttons">
-         <button onclick="window.location.href='cadastro.html'" class="button-header-criar-conta">
-            Criar Conta
-         </button>
-         <button onclick="window.location.href='login.html'"  class="button-header-login">
-             Login
-         </button>
+        </h1>
+      </div>
+      
+      <nav class="navigation" role="navigation">
+        <ul class="nav-list">
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#quem-somos" class="nav-link">Quem somos</a></li>
+          <li><a href="#contato" class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      
+      <div class="header-actions">
+        <button onclick="window.location.href='cadastro.html'" class="btn btn-outline" aria-label="Criar nova conta">
+          Criar Conta
+        </button>
+        <button onclick="window.location.href='login.html'" class="btn btn-primary" aria-label="Fazer login">
+          Login
+        </button>
+      </div>
     </div>
   </header>
-  
 
- <main class="landing-container">
-
-    <!-- Seção inicial -->
-    <section class="intro-section">
-      <div class="intro-text">
-        <h1>
-          Bem-vindo ao <span class="psi">Psi</span><span class="conecta">Conecta</span>
-        </h1>
-        <p>
-          Conectamos psicólogos e supervisores de forma prática, ética e segura. <br>
-          Nossa plataforma foi criada para facilitar o acompanhamento profissional por meio de supervisões personalizadas e acessíveis.
-        </p>
-        <p class="call">
-          <strong>Cadastre-se como psicólogo ou supervisor e faça parte de uma rede de crescimento e aprendizado mútuo.</strong>
-        </p>
-      
-      </div>
-      <div class="intro-image">
-        <img src="./imgs/um-consultorio-medico-minimalista-com-um-espaco-de-consulta-elegante_853812-6382.avif" alt="Imagem de conexão">
+  <main class="main-content">
+    <!-- Seção Hero -->
+    <section class="hero-section" id="home">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">
+              Bem-vindo ao <span class="psi">Psi</span><span class="conecta">Conecta</span>
+            </h1>
+            <p class="hero-description">
+              Conectamos psicólogos e supervisores de forma prática, ética e segura. 
+              Nossa plataforma foi criada para facilitar o acompanhamento profissional 
+              por meio de supervisões personalizadas e acessíveis.
+            </p>
+            <p class="hero-cta">
+              <strong>Cadastre-se como psicólogo ou supervisor e faça parte de uma rede de crescimento e aprendizado mútuo.</strong>
+            </p>
+          </div>
+          
+          <div class="hero-image">
+            <img src="./imgs/um-consultorio-medico-minimalista-com-um-espaco-de-consulta-elegante_853812-6382.avif" 
+                 alt="Consultório médico minimalista com espaço de consulta elegante" 
+                 class="hero-img">
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Seção de funcionalidades -->
+    <!-- Seção de Funcionalidades -->
     <section class="features-section">
-      <h2>O que você encontra aqui:</h2>
-      <div class="features">
-        <div class="feature-box">
-          <span>🧑‍⚕️</span>
-          <p>Supervisores qualificados em diversas abordagens</p>
-        </div>
-        <div class="feature-box">
-          <span>📅</span>
-          <p>Agendamento facilitado de encontros</p>
-        </div>
-        <div class="feature-box">
-          <span>💬</span>
-          <p>Chat direto entre psicólogo e supervisor</p>
-        </div>
-        <div class="feature-box">
-          <span>📈</span>
-          <p>Acompanhamento do seu desenvolvimento profissional</p>
+      <div class="container">
+        <h2 class="section-title">O que você encontra aqui:</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🧑‍⚕️</div>
+            <h3 class="feature-title">Supervisores Qualificados</h3>
+            <p class="feature-description">Profissionais experientes em diversas abordagens terapêuticas</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3 class="feature-title">Agendamento Facilitado</h3>
+            <p class="feature-description">Sistema intuitivo para marcar seus encontros de supervisão</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3 class="feature-title">Comunicação Direta</h3>
+            <p class="feature-description">Chat integrado entre psicólogo e supervisor</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3 class="feature-title">Desenvolvimento Profissional</h3>
+            <p class="feature-description">Acompanhe seu crescimento e evolução na carreira</p>
+          </div>
         </div>
       </div>
     </section>
-
   </main>
-
-
-
-
-
-
-
-
-
-
-
 
   <script>
     function irParaCadastro() {
-      const tipo = document.getElementById('tipoUsuario').value;
+      const tipo = document.getElementById('tipoUsuario')?.value;
       window.location.href = tipo === 'supervisor' ? 'dashboard-supervisor.html' : 'dashboard-psicologo.html';
     }
+    
     function irParaLogin() {
       irParaCadastro(); // mesma lógica simulada
     }
+
+    // Smooth scroll para links internos
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
   </script>
 </body>
 </html>
