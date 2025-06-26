@@ -263,10 +263,39 @@ async function enviarMensagem() {
 
 
 
-// Solicitação de supervisão (simulada)
-function requestSupervision(supervisorId, supervisorName) {
-    alert(`Solicitação enviada para ${supervisorName} (ID ${supervisorId})`);
+// Solicitação de supervisão
+async function requestSupervision(supervisorId, supervisorName) {
+  const psicologo = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const psicologoId = psicologo?.id;
+
+  if (!psicologoId) {
+    alert("Usuário não está logado.");
+    return;
+  }
+
+  try {
+    const response = await fetch("https://apimensagemlogin-production.up.railway.app/solicitacoes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        psicologoId,
+        supervisorId,
+        status: "PENDENTE"
+      })
+    });
+
+    if (!response.ok) throw new Error("Erro ao enviar solicitação");
+
+    alert(`Solicitação enviada para ${supervisorName}`);
+    fetchSolicitacoes(); // Atualiza a lista de solicitações, se tiver essa função
+  } catch (err) {
+    console.error("Erro ao solicitar supervisão:", err);
+    alert("Erro ao enviar solicitação.");
+  }
 }
+
 
 
 
