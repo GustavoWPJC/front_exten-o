@@ -6,6 +6,13 @@ if (!usuarioLogado || usuarioLogado.tipoUsuario !== "supervisor") {
   window.location.href = "login.html";
 }
 
+// Atualiza o nome do supervisor no cabeçalho
+const userWelcomeEl = document.getElementById("user-welcome");
+if (userWelcomeEl && usuarioLogado.nome) {
+  userWelcomeEl.textContent = `Bem-vindo(a), Dr(a). ${usuarioLogado.nome}`;
+}
+
+
 const SUPERVISOR_ID = usuarioLogado.id;
 
 let psicologos = [];
